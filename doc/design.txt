@@ -1,0 +1,11 @@
+1. Database
+Stock table:
+id - auto increment type
+ticker_symbol - unique ticker symbol
+company_name - name of the company
+
+Stock Quotes table
+id - row id
+stock_id - foreign key from the stock table
+quote_date - the date of the quote
+stock_price - the price of the stock
