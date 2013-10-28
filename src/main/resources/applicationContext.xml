@@ -1,12 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jpa="http://www.springframework.org/schema/data/jpa" 
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs" xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
 	   					   http://www.springframework.org/schema/beans/spring-beans.xsd
 	   					   http://www.springframework.org/schema/data/jpa
-    					   http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+    					   http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+    					   http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
+    					   http://www.springframework.org/schema/context
+						   http://www.springframework.org/schema/context/spring-context.xsd
+    					   ">
 
-	<jpa:repositories base-package="test.chetan.model" />
+	
+  	<import resource="classpath:META-INF/cxf/cxf.xml" />
+    <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+ 	<jpa:repositories base-package="test.chetan.repository" />
+ 
+     <jaxrs:server id="stockService" address="/stockService">
+        <jaxrs:serviceBeans>
+           <ref bean="stockServiceBean"/>
+        </jaxrs:serviceBeans>
+     </jaxrs:server>
+       
+     <bean id="stockServiceBean" class="test.chetan.endpoint.StockServiceEndpoint"/> 
 
 	<bean id="dataSource" destroy-method="close"
 		class="org.apache.commons.dbcp.BasicDataSource">
@@ -44,5 +60,10 @@
 			</bean>
 		</property>
 	</bean>
+	
+	<context:component-scan base-package="test.chetan.repository.*" />
+	
+	<context:component-scan base-package="test.chetan.endpoint.*" />
+	
 
 </beans>
