@@ -69,6 +69,26 @@
     	<artifactId>logback-classic</artifactId>
     	<version>1.0.11</version>
     </dependency>
+    <dependency>
+    	<groupId>org.codehaus.jackson</groupId>
+    	<artifactId>jackson-jaxrs</artifactId>
+    	<version>1.9.12</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.codehaus.jackson</groupId>
+    	<artifactId>jackson-core-asl</artifactId>
+    	<version>1.9.12</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.codehaus.jackson</groupId>
+    	<artifactId>jackson-mapper-asl</artifactId>
+    	<version>1.9.12</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.codehaus.jackson</groupId>
+    	<artifactId>jackson-xc</artifactId>
+    	<version>1.9.12</version>
+    </dependency>
   </dependencies>
   <build>
     <finalName>sample-web</finalName>

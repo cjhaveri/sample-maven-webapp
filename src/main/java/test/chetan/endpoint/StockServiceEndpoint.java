@@ -17,10 +17,10 @@ import test.chetan.dto.StockDTO;
 import test.chetan.model.Stock;
 import test.chetan.repository.StockRepository;
 
-//@Service
+
 @Service("StockServiceEndpoint")
 @Path("/stockservice/")
-//@Produces("application/json")
+@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class StockServiceEndpoint {
 	
 	Logger logger = LoggerFactory.getLogger(StockServiceEndpoint.class);
@@ -31,26 +31,10 @@ public class StockServiceEndpoint {
 	public StockServiceEndpoint(){
 		logger.debug("endpoint class invoked");
 	}
-	
-	@GET
-	public StockDTO getStockInformation() {
-		
-Stock oneStock = stockRepository.findOne(1);
-		
-		//convert it into dto
-		StockDTO stockFound = new StockDTO();
-		
-		if (stockFound != null) {		
-			stockFound.setId(oneStock.getId());
-			stockFound.setCompanyName(oneStock.getCompanyName());
-			stockFound.setTickerSymbol(stockFound.getTickerSymbol());
-		}
-		return stockFound;
-	}
+
 	
 	@GET
 	@Path("/stock/{id}")
-	@Produces(MediaType.APPLICATION_XML)
 	public StockDTO getStockInformationById(@PathParam("id") int id) {
 		
 		Stock oneStock = stockRepository.findOne(id);
@@ -61,7 +45,7 @@ Stock oneStock = stockRepository.findOne(1);
 		if (oneStock != null) {		
 			stockFound.setId(oneStock.getId());
 			stockFound.setCompanyName(oneStock.getCompanyName());
-			stockFound.setTickerSymbol(stockFound.getTickerSymbol());
+			stockFound.setTickerSymbol(oneStock.getTickerSymbol());
 		}
 		return stockFound;
 		
