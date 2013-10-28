@@ -1,0 +1,27 @@
+Building the code:
+mvn clean install
+
+Running the code:
+mvn tomcat:run
+
+Opening the h2 web console:
+http://localhost:8080/sample-web/console/
+(username: sa, just click on login then).
+
+Inserting some sample data:
+insert into stock values(1,ÕNetflix','nflx');
+
+Rest Client plugin for firefox:
+https://addons.mozilla.org/En-us/firefox/addon/restclient/
+
+Create a new Rest request:
+Method: GET
+URL: http://localhost:8080/sample-web/service/stockservice/stock/1
+Header : Name - Accept  ; Value - application/xml
+Hit Send
+You should see:
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?><stock><companyName>Netflix</companyName><id>1</id><tickerSymbol>nflx</tickerSymbol></stock></stock>
+
+If you now change the header value to application/json
+you should see:
+{"id":1,"companyName":"Netflix","tickerSymbol":"nflx"}
