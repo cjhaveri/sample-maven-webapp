@@ -11,18 +11,25 @@
 						   http://www.springframework.org/schema/context/spring-context.xsd
     					   ">
 
+	<context:annotation-config/>
+	
+	<jpa:repositories base-package="test.chetan.repository" />
+ 	<context:component-scan base-package="test.chetan.repository" />	
+	<context:component-scan base-package="test.chetan.endpoint" />
 	
   	<import resource="classpath:META-INF/cxf/cxf.xml" />
     <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
- 	<jpa:repositories base-package="test.chetan.repository" />
- 
+ 	
      <jaxrs:server id="stockService" address="/stockService">
         <jaxrs:serviceBeans>
-           <ref bean="stockServiceBean"/>
+           <ref bean="StockServiceEndpoint"/>
         </jaxrs:serviceBeans>
+        <jaxrs:providers>
+        	<bean id="jaxbProvider" class="org.apache.cxf.jaxrs.provider.JAXBElementProvider"/>
+        </jaxrs:providers>
      </jaxrs:server>
        
-     <bean id="stockServiceBean" class="test.chetan.endpoint.StockServiceEndpoint"/> 
+<!--      <bean id="stockServiceBean" class="test.chetan.endpoint.StockServiceEndpoint"/>  -->
 
 	<bean id="dataSource" destroy-method="close"
 		class="org.apache.commons.dbcp.BasicDataSource">
@@ -50,7 +57,7 @@
 		<!-- <property name="jpaDialect" value="org.hibernate.dialect.H2Dialect"/> -->
 		<property name="jpaProperties">
 			<props>
-				<prop key="hibernate.hbm2ddl.auto">create-drop</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
 			</props>
 		</property>
 		<property name="jpaVendorAdapter">
@@ -61,9 +68,9 @@
 		</property>
 	</bean>
 	
-	<context:component-scan base-package="test.chetan.repository.*" />
 	
-	<context:component-scan base-package="test.chetan.endpoint.*" />
-	
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="myEmf"/>
+	</bean>
 
 </beans>

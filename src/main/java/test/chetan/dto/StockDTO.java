@@ -1,18 +1,17 @@
 package test.chetan.dto;
 
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement
+@XmlRootElement(name="stock")
 public class StockDTO {
 	
-	@XmlElement(name="id")
+	//@XmlElement(name="id")
 	private int id;
 	
-	@XmlElement(name="company")
+	//@XmlElement(name="company")
 	private String companyName;
 
-	@XmlElement(name="ticker")
+	//@XmlElement(name="ticker")
 	private String tickerSymbol;
 
 	public int getId() {
