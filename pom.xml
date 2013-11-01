@@ -102,12 +102,18 @@
 			<plugin>
 				<groupId>org.codehaus.cargo</groupId>
 				<artifactId>cargo-maven2-plugin</artifactId>
+				<configuration>
+					<container>
+						<containerId>tomcat6x</containerId>
+					</container>
+
+				</configuration>
+
 				<executions>
 					<execution>
 						<id>start-cargo</id>
 						<phase>pre-integration-test</phase>
 						<goals>
-							<!-- <goal>run</goal> -->
 							<goal>start</goal>
 						</goals>
 					</execution>
