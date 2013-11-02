@@ -7,5 +7,7 @@ import test.chetan.model.Stock;
 
 @Repository
 public interface StockRepository extends JpaRepository<Stock, Integer> {
+	
+	public Stock findByTickerSymbol(String companyName);
 
 }

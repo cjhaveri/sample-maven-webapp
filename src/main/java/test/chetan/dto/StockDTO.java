@@ -2,25 +2,14 @@ package test.chetan.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name="stock")
+@XmlRootElement(name = "stock")
 public class StockDTO {
-	
-	//@XmlElement(name="id")
-	private int id;
-	
-	//@XmlElement(name="company")
+
+	// @XmlElement(name="company")
 	private String companyName;
 
-	//@XmlElement(name="ticker")
+	// @XmlElement(name="ticker")
 	private String tickerSymbol;
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
 
 	public String getCompanyName() {
 		return companyName;
@@ -37,9 +26,5 @@ public class StockDTO {
 	public void setTickerSymbol(String tickerSymbol) {
 		this.tickerSymbol = tickerSymbol;
 	}
-	
-	
-	
-	
-	
+
 }

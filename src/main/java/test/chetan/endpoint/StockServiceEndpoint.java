@@ -1,8 +1,9 @@
 package test.chetan.endpoint;
 
 import javax.ws.rs.core.MediaType;
-
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -34,21 +35,50 @@ public class StockServiceEndpoint {
 
 	
 	@GET
-	@Path("/stock/{id}")
-	public StockDTO getStockInformationById(@PathParam("id") int id) {
+	@Path("/stock/{ticker}")
+	public StockDTO getStockInformationById(@PathParam("ticker") String ticker) {
 		
-		Stock oneStock = stockRepository.findOne(id);
+		Stock oneStock = stockRepository.findByTickerSymbol(ticker);
 		
 		//convert it into dto
 		StockDTO stockFound = new StockDTO();
 		
 		if (oneStock != null) {		
-			stockFound.setId(oneStock.getId());
 			stockFound.setCompanyName(oneStock.getCompanyName());
 			stockFound.setTickerSymbol(oneStock.getTickerSymbol());
 		}
 		return stockFound;
 		
+	}
+	
+	@POST
+	@Path("/stock")
+	public Response addStockInformation(StockDTO stock) {
+		
+		Stock stockToSave = new Stock();
+		stockToSave.setCompanyName(stock.getCompanyName());
+		stockToSave.setTickerSymbol(stock.getTickerSymbol());
+		
+		
+		Stock savedStock = stockRepository.save(stockToSave);
+		logger.debug("saved stock with id: {}", savedStock.getId());
+		
+		return Response.ok().build();
+		
+	}
+	
+	@DELETE
+	@Path("/stock/{ticker}")
+	public Response deleteStockByName(@PathParam("ticker")String ticker) {
+		
+		Stock stockFound = stockRepository.findByTickerSymbol(ticker);
+		if (stockFound != null) {
+			stockRepository.delete(stockFound);
+		} else {
+			return Response.notModified("Stock not found").build();
+		}
+		
+		return Response.ok().build();
 	}
 
 	
