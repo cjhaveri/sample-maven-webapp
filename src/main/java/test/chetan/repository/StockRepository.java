@@ -1,7 +1,10 @@
 package test.chetan.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import test.chetan.model.Stock;
 
@@ -9,5 +12,10 @@ import test.chetan.model.Stock;
 public interface StockRepository extends JpaRepository<Stock, Integer> {
 	
 	public Stock findByTickerSymbol(String companyName);
-
+	
+	@Transactional
+	@Modifying
+	@Query("DELETE FROM Stock s")
+	public void deleteAllData();
+	
 }

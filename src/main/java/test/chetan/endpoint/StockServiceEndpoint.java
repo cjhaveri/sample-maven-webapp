@@ -56,12 +56,21 @@ public class StockServiceEndpoint {
 	public Response addStockInformation(StockDTO stock) {
 		
 		Stock stockToSave = new Stock();
+		
+		if (stock.getCompanyName() == null || stock.getCompanyName().equals("")) {
+			
+			return Response.noContent().build();
+		}
+		
+		if (stock.getTickerSymbol() == null || stock.getTickerSymbol().equals("")) {
+			return Response.noContent().build();
+		}
 		stockToSave.setCompanyName(stock.getCompanyName());
 		stockToSave.setTickerSymbol(stock.getTickerSymbol());
 		
 		
 		Stock savedStock = stockRepository.save(stockToSave);
-		logger.debug("saved stock with id: {}", savedStock.getId());
+		//logger.debug("saved stock with id: {}", savedStock.getId());
 		
 		return Response.ok().build();
 		
@@ -71,6 +80,7 @@ public class StockServiceEndpoint {
 	@Path("/stock/{ticker}")
 	public Response deleteStockByName(@PathParam("ticker")String ticker) {
 		
+		
 		Stock stockFound = stockRepository.findByTickerSymbol(ticker);
 		if (stockFound != null) {
 			stockRepository.delete(stockFound);
@@ -78,6 +88,14 @@ public class StockServiceEndpoint {
 			return Response.notModified("Stock not found").build();
 		}
 		
+		return Response.ok().build();
+	}
+	
+	@DELETE
+	@Path("/stock")
+	public Response deleteAllStocks() {
+		
+		stockRepository.deleteAllData();
 		return Response.ok().build();
 	}
 
