@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema xmlns="http://test/chetan/dto" version="1.0"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" jaxb:version="2.0"
+	jaxb:extensionBindingPrefixes="xjc" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+	xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" elementFormDefault="qualified"
+	targetNamespace="http://test/chetan/dto">
+
+	<!--  this will generate the xmlrootelment (as much as possible) -->
+	<xs:annotation>
+		<xs:appinfo>
+			<jaxb:globalBindings>
+				<xjc:simple />
+			</jaxb:globalBindings>
+
+		</xs:appinfo>
+	</xs:annotation>
+	
+	
+	<xs:element name="stockDTO" type="stockDTO" />
+
+	<xs:complexType name="stockDTO">
+		<xs:sequence>
+			<xs:element name="companyName" type="xs:string" minOccurs="0" />
+			<xs:element name="tickerSymbol" type="xs:string"
+				minOccurs="0" />
+
+			<xs:choice maxOccurs="unbounded">
+				<xs:element name="one" type="Attribute" />
+			</xs:choice>
+
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="Attribute" abstract="true">
+		<xs:sequence>
+			<xs:element name="common" type="xs:string" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="Attribute_1">
+		<xs:complexContent>
+			<xs:extension base="Attribute">
+				<xs:sequence>
+					<xs:element name="updated" type="xs:string" minOccurs="0" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+
+	</xs:complexType>
+
+	<xs:complexType name="Attribute_2">
+		<xs:complexContent>
+			<xs:extension base="Attribute">
+				<xs:sequence>
+					<xs:element name="created" type="xs:string" minOccurs="0" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>
+

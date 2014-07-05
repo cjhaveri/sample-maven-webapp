@@ -96,10 +96,48 @@
 			<version>1.9.5</version>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>org.jvnet.jaxb2_commons</groupId>
+			<artifactId>jaxb2-basics</artifactId>
+			<version>0.6.4</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>sample-web</finalName>
 		<plugins>
+			<plugin>
+				<groupId>org.jvnet.jaxb2.maven2</groupId>
+				<artifactId>maven-jaxb2-plugin</artifactId>
+				<version>0.8.0</version>
+				<executions>
+					<execution>
+						<id>generate-dto</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<schemaIncludes>
+						<schemaIncludes>**/*.xsd</schemaIncludes>
+					</schemaIncludes>
+					<verbose>false</verbose>
+					<debug>false</debug>
+					<extension>true</extension>
+					<strict>false</strict>
+					<!--  commented since maven kept complaining -->
+					<!-- <args>
+						<arg>-Xdefault-value</arg>
+						<arg>-Xequals</arg>
+						<arg>-XhashCode</arg>
+						<arg>-XtoString</arg>
+						<arg>-no-header</arg>
+					</args> -->
+				</configuration>
+			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -110,11 +148,23 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			
+			<plugin>
+				<groupId>org.jvnet.jaxb2_common</groupId>
+				<artifactId>jaxb2-default-value</artifactId>
+				<version>1.1</version>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.jvnet.jaxb2_common</groupId>
+				<artifactId>jaxb2-basics</artifactId>
+				<version>0.6.4</version>
+			</plugin>
 		</plugins>
 	</build>
 	<profiles>
 		<profile>
-		<id>integration-test</id>
+			<id>integration-test</id>
 			<build>
 				<finalName>sample-web</finalName>
 				<plugins>
