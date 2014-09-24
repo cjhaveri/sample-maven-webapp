@@ -96,7 +96,12 @@
 			<version>1.9.5</version>
 			<scope>test</scope>
 		</dependency>
-
+		<!-- AOP dependency -->
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib</artifactId>
+			<version>2.2</version>
+		</dependency>
 		<dependency>
 			<groupId>org.jvnet.jaxb2_commons</groupId>
 			<artifactId>jaxb2-basics</artifactId>
@@ -127,14 +132,9 @@
 					<debug>false</debug>
 					<extension>true</extension>
 					<strict>false</strict>
-					<!--  commented since maven kept complaining -->
-					<!-- <args>
-						<arg>-Xdefault-value</arg>
-						<arg>-Xequals</arg>
-						<arg>-XhashCode</arg>
-						<arg>-XtoString</arg>
-						<arg>-no-header</arg>
-					</args> -->
+					<!-- commented since maven kept complaining -->
+					<!-- <args> <arg>-Xdefault-value</arg> <arg>-Xequals</arg> <arg>-XhashCode</arg> 
+						<arg>-XtoString</arg> <arg>-no-header</arg> </args> -->
 				</configuration>
 			</plugin>
 
@@ -148,13 +148,13 @@
 					</excludes>
 				</configuration>
 			</plugin>
-			
+
 			<plugin>
 				<groupId>org.jvnet.jaxb2_common</groupId>
 				<artifactId>jaxb2-default-value</artifactId>
 				<version>1.1</version>
 			</plugin>
-			
+
 			<plugin>
 				<groupId>org.jvnet.jaxb2_common</groupId>
 				<artifactId>jaxb2-basics</artifactId>

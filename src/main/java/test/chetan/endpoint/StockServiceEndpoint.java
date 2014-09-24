@@ -1,33 +1,41 @@
 package test.chetan.endpoint;
 
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import test.chetan.dto.StockDTO;
+import test.chetan.model.Comments;
 import test.chetan.model.Stock;
+import test.chetan.repository.CommentsRepository;
 import test.chetan.repository.StockRepository;
 
 
 @Service("StockServiceEndpoint")
 @Path("/stockservice/")
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+@Transactional
 public class StockServiceEndpoint {
 	
 	Logger logger = LoggerFactory.getLogger(StockServiceEndpoint.class);
 	
 	@Autowired
 	StockRepository stockRepository;
+	
+	@Autowired
+	CommentsRepository commentRepository;
 	
 	public StockServiceEndpoint(){
 		logger.debug("endpoint class invoked");
@@ -36,7 +44,7 @@ public class StockServiceEndpoint {
 	
 	@GET
 	@Path("/stock/{ticker}")
-	public StockDTO getStockInformationById(@PathParam("ticker") String ticker) {
+	public Response getStockInformationById(@PathParam("ticker") String ticker) {
 		
 		Stock oneStock = stockRepository.findByTickerSymbol(ticker);
 		
@@ -46,13 +54,17 @@ public class StockServiceEndpoint {
 		if (oneStock != null) {		
 			stockFound.setCompanyName(oneStock.getCompanyName());
 			stockFound.setTickerSymbol(oneStock.getTickerSymbol());
+			return Response.ok(stockFound).build();
+		} else {
+			return Response.status(Status.NOT_FOUND).build();
 		}
-		return stockFound;
+		
 		
 	}
 	
 	@POST
 	@Path("/stock")
+	@Transactional(rollbackFor = {Exception.class})
 	public Response addStockInformation(StockDTO stock) {
 		
 		Stock stockToSave = new Stock();
@@ -70,7 +82,14 @@ public class StockServiceEndpoint {
 		
 		
 		Stock savedStock = stockRepository.save(stockToSave);
+		
+		Comments comment = new Comments();
+		comment.setComments(stock.getComments());
+		//comment.setComments("this comment is definitely greater than 25 characters long for sure!!!!!!!");
+		commentRepository.save(comment);
 		//logger.debug("saved stock with id: {}", savedStock.getId());
+		
+		
 		
 		return Response.ok().build();
 		

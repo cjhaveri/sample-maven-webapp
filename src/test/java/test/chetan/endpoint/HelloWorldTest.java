@@ -11,6 +11,7 @@ import static org.mockito.Mockito.*;
 import test.chetan.dto.StockDTO;
 import test.chetan.endpoint.StockServiceEndpoint;
 import test.chetan.model.Stock;
+import test.chetan.repository.CommentsRepository;
 import test.chetan.repository.StockRepository;
 
 /**
@@ -39,18 +40,24 @@ public class HelloWorldTest {
 		StockDTO goodStock = new StockDTO();
 		goodStock.setCompanyName("IBM Corporation");
 		goodStock.setTickerSymbol("IBM");
+		goodStock.setComments("Hey Hey");
 		
 		Stock mockStock = new Stock();
 		mockStock.setCompanyName("IBM Corporation");
 		mockStock.setTickerSymbol("IBM");
-		
+	
 		StockRepository mockRepository = mock(StockRepository.class);
+		
+		CommentsRepository commentsRepository = mock(CommentsRepository.class);
+		
 		//look into why this is not needed anymore!
 		//when(mockRepository.save(any(Stock.class))).thenReturn(mockStock);
 	
 		StockServiceEndpoint endPoint = new StockServiceEndpoint();
 		//set the mock repository in
 		endPoint.stockRepository = mockRepository;
+		endPoint.commentRepository = commentsRepository;
+		
 		
 		Response response = endPoint.addStockInformation(goodStock);
 		

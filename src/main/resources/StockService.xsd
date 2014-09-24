@@ -5,7 +5,7 @@
 	xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" elementFormDefault="qualified"
 	targetNamespace="http://test/chetan/dto">
 
-	<!--  this will generate the xmlrootelment (as much as possible) -->
+	<!-- this will generate the xmlrootelment (as much as possible) -->
 	<xs:annotation>
 		<xs:appinfo>
 			<jaxb:globalBindings>
@@ -14,13 +14,14 @@
 
 		</xs:appinfo>
 	</xs:annotation>
-	
-	
+
+
 	<xs:element name="stockDTO" type="stockDTO" />
 
 	<xs:complexType name="stockDTO">
 		<xs:sequence>
 			<xs:element name="companyName" type="xs:string" minOccurs="0" />
+			<xs:element name="comments" type="xs:string" minOccurs="0" />
 			<xs:element name="tickerSymbol" type="xs:string"
 				minOccurs="0" />
 
