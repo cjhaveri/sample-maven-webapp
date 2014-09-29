@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import test.chetan.dto.StockDTO;
@@ -36,6 +37,9 @@ public class StockServiceEndpoint {
 	
 	@Autowired
 	CommentsRepository commentRepository;
+	
+	@Autowired
+	TransactionalMisc misc;
 	
 	public StockServiceEndpoint(){
 		logger.debug("endpoint class invoked");
@@ -64,7 +68,7 @@ public class StockServiceEndpoint {
 	
 	@POST
 	@Path("/stock")
-	@Transactional(rollbackFor = {Exception.class})
+	@Transactional(rollbackFor = {Exception.class}, propagation=Propagation.NESTED)
 	public Response addStockInformation(StockDTO stock) {
 		
 		Stock stockToSave = new Stock();
@@ -83,10 +87,15 @@ public class StockServiceEndpoint {
 		
 		Stock savedStock = stockRepository.save(stockToSave);
 		
+
+		misc.saveMisc("1234");
+		
+		
 		Comments comment = new Comments();
 		comment.setComments(stock.getComments());
 		//comment.setComments("this comment is definitely greater than 25 characters long for sure!!!!!!!");
 		commentRepository.save(comment);
+		
 		//logger.debug("saved stock with id: {}", savedStock.getId());
 		
 		

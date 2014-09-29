@@ -8,8 +8,11 @@
   </appender>
    
   <logger name="com.base22" level="TRACE"/>
-   
- 
+  <!-- 
+  <logger name="org.springframework" level="INFO"/>
+
+  <logger name="org.hibernate" level="DEBUG"/>   
+ --> 
   <root level="debug">
     <appender-ref ref="STDOUT" />
   </root>
