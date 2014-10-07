@@ -58,6 +58,8 @@ public class StockServiceEndpoint {
 		if (oneStock != null) {		
 			stockFound.setCompanyName(oneStock.getCompanyName());
 			stockFound.setTickerSymbol(oneStock.getTickerSymbol());
+			stockFound.setComments(Integer.toString(oneStock.getComments().size()));
+			
 			return Response.ok(stockFound).build();
 		} else {
 			return Response.status(Status.NOT_FOUND).build();
@@ -85,7 +87,7 @@ public class StockServiceEndpoint {
 		stockToSave.setTickerSymbol(stock.getTickerSymbol());
 		
 		
-		Stock savedStock = stockRepository.save(stockToSave);
+		Stock saved = stockRepository.save(stockToSave);
 		
 
 		misc.saveMisc("1234");
@@ -93,6 +95,9 @@ public class StockServiceEndpoint {
 		
 		Comments comment = new Comments();
 		comment.setComments(stock.getComments());
+		comment.setStockId(saved);
+		
+		
 		//comment.setComments("this comment is definitely greater than 25 characters long for sure!!!!!!!");
 		commentRepository.save(comment);
 		

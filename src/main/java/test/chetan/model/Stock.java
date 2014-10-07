@@ -1,22 +1,35 @@
 package test.chetan.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Stock {
 	
-	private int id;
-	
-	private String tickerSymbol;
-	
-	private String companyName;
-	
+
 	@Id
 	@GeneratedValue
+	@Column(name = "stock_id", nullable = false)
+	private int id;
+	
+	@Column(name="ticker_symbol")
+	private String tickerSymbol;
+	
+	@Column(name="company_name")
+	private String companyName;
+	
+	@OneToMany(mappedBy = "stockId", fetch = FetchType.LAZY)
+	private Set<Comments> comments = new HashSet<Comments>();
+	
+	
 	public int getId() {
 		return id;
 	}
@@ -25,7 +38,6 @@ public class Stock {
 		this.id = id;
 	}
 	
-	@Column(name="ticker_symbol")
 	public String getTickerSymbol() {
 		return tickerSymbol;
 	}
@@ -34,7 +46,6 @@ public class Stock {
 		this.tickerSymbol = tickerSymbol;
 	}
 
-	@Column(name="company_name")
 	public String getCompanyName() {
 		return companyName;
 	}
@@ -42,6 +53,16 @@ public class Stock {
 	public void setCompanyName(String companyName) {
 		this.companyName = companyName;
 	}
+
+	public Set<Comments> getComments() {
+		return comments;
+	}
+
+	public void setComments(Set<Comments> comments) {
+		this.comments = comments;
+	}
+	
+	
 	
 	
 

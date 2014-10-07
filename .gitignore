@@ -4,3 +4,6 @@ target
 .settings/
 /test-output
 /xjc-generated
+/target
+.idea/
+*.iml
