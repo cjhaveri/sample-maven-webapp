@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:jpa="http://www.springframework.org/schema/data/jpa" 
-	xmlns:jaxrs="http://cxf.apache.org/jaxrs"
-	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:cxf="http://cxf.apache.org/core"
 	xmlns:tx="http://www.springframework.org/schema/tx"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
 	   					   http://www.springframework.org/schema/beans/spring-beans.xsd
@@ -14,28 +13,32 @@
 						   http://www.springframework.org/schema/context/spring-context.xsd
 						   http://www.springframework.org/schema/tx 
 						   http://www.springframework.org/schema/tx/spring-tx.xsd
+						   http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
     					   ">
 
-	<context:annotation-config/>
-	
+	<context:annotation-config />
+
 	<jpa:repositories base-package="test.chetan.repository" />
- 	<context:component-scan base-package="test.chetan.repository" />	
+	<context:component-scan base-package="test.chetan.repository" />
 	<context:component-scan base-package="test.chetan.endpoint" />
-	
-  	<import resource="classpath:META-INF/cxf/cxf.xml" />
-    <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
- 	
-     <jaxrs:server id="stockService">
-        <jaxrs:serviceBeans>
-           <ref bean="StockServiceEndpoint"/>
-        </jaxrs:serviceBeans>
-        <jaxrs:providers>
-        	<!-- <bean id="jaxbProvider" class="org.apache.cxf.jaxrs.provider.JAXBElementProvider"/> -->
-        	<bean class="org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider"/>
-         </jaxrs:providers>
-     </jaxrs:server>
-       
-<!--      <bean id="stockServiceBean" class="test.chetan.endpoint.StockServiceEndpoint"/>  -->
+
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+
+	<jaxrs:server id="stockService">
+		<jaxrs:serviceBeans>
+			<ref bean="StockServiceEndpoint" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<!-- <bean id="jaxbProvider" class="org.apache.cxf.jaxrs.provider.JAXBElementProvider"/> -->
+			<bean class="org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider" />
+		</jaxrs:providers>
+		<jaxrs:features>
+			<cxf:logging />
+		</jaxrs:features>
+	</jaxrs:server>
+
+	<!-- <bean id="stockServiceBean" class="test.chetan.endpoint.StockServiceEndpoint"/> -->
 
 	<bean id="dataSource" destroy-method="close"
 		class="org.apache.commons.dbcp.BasicDataSource">
@@ -73,12 +76,12 @@
 			</bean>
 		</property>
 	</bean>
-	
-	
+
+
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-		<property name="entityManagerFactory" ref="myEmf"/>
+		<property name="entityManagerFactory" ref="myEmf" />
 	</bean>
 
-	<tx:annotation-driven transaction-manager="transactionManager"/>
+	<tx:annotation-driven transaction-manager="transactionManager" />
 
 </beans>

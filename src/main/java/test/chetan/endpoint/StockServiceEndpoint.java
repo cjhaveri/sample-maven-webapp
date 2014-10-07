@@ -1,5 +1,7 @@
 package test.chetan.endpoint;
 
+import javassist.bytecode.Descriptor.Iterator;
+
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -23,29 +25,27 @@ import test.chetan.model.Stock;
 import test.chetan.repository.CommentsRepository;
 import test.chetan.repository.StockRepository;
 
-
 @Service("StockServiceEndpoint")
 @Path("/stockservice/")
-@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Transactional
 public class StockServiceEndpoint {
-	
+
 	Logger logger = LoggerFactory.getLogger(StockServiceEndpoint.class);
-	
+
 	@Autowired
 	StockRepository stockRepository;
-	
+
 	@Autowired
 	CommentsRepository commentRepository;
-	
+
 	@Autowired
 	TransactionalMisc misc;
-	
-	public StockServiceEndpoint(){
+
+	public StockServiceEndpoint() {
 		logger.debug("endpoint class invoked");
 	}
 
-	
 	@GET
 	@Path("/stock/{ticker}")
 	public Response getStockInformationById(@PathParam("ticker") String ticker) {
@@ -59,7 +59,10 @@ public class StockServiceEndpoint {
 			stockFound.setCompanyName(oneStock.getCompanyName());
 			stockFound.setTickerSymbol(oneStock.getTickerSymbol());
 			stockFound.setComments(Integer.toString(oneStock.getComments().size()));
-			
+			java.util.Iterator<Comments> it = oneStock.getComments().iterator();
+			while (it.hasNext()){
+				logger.info("comment: {}", it.next().getComments());
+			}
 			return Response.ok(stockFound).build();
 		} else {
 			return Response.status(Status.NOT_FOUND).build();
@@ -67,70 +70,63 @@ public class StockServiceEndpoint {
 		
 		
 	}
-	
+
 	@POST
 	@Path("/stock")
-	@Transactional(rollbackFor = {Exception.class}, propagation=Propagation.NESTED)
+	@Transactional(rollbackFor = { Exception.class }, propagation = Propagation.NESTED)
 	public Response addStockInformation(StockDTO stock) {
-		
+
 		Stock stockToSave = new Stock();
-		
+
 		if (stock.getCompanyName() == null || stock.getCompanyName().equals("")) {
-			
+
 			return Response.noContent().build();
 		}
-		
-		if (stock.getTickerSymbol() == null || stock.getTickerSymbol().equals("")) {
+
+		if (stock.getTickerSymbol() == null
+				|| stock.getTickerSymbol().equals("")) {
 			return Response.noContent().build();
 		}
 		stockToSave.setCompanyName(stock.getCompanyName());
 		stockToSave.setTickerSymbol(stock.getTickerSymbol());
-		
-		
+
 		Stock saved = stockRepository.save(stockToSave);
-		
 
 		misc.saveMisc("1234");
-		
-		
+
 		Comments comment = new Comments();
 		comment.setComments(stock.getComments());
 		comment.setStockId(saved);
-		
-		
-		//comment.setComments("this comment is definitely greater than 25 characters long for sure!!!!!!!");
+
+		// comment.setComments("this comment is definitely greater than 25 characters long for sure!!!!!!!");
 		commentRepository.save(comment);
-		
-		//logger.debug("saved stock with id: {}", savedStock.getId());
-		
-		
-		
+
+		// logger.debug("saved stock with id: {}", savedStock.getId());
+
 		return Response.ok().build();
-		
+
 	}
-	
+
 	@DELETE
 	@Path("/stock/{ticker}")
-	public Response deleteStockByName(@PathParam("ticker")String ticker) {
-		
-		
+	public Response deleteStockByName(@PathParam("ticker") String ticker) {
+
 		Stock stockFound = stockRepository.findByTickerSymbol(ticker);
 		if (stockFound != null) {
 			stockRepository.delete(stockFound);
 		} else {
 			return Response.notModified("Stock not found").build();
 		}
-		
+
 		return Response.ok().build();
 	}
-	
+
 	@DELETE
 	@Path("/stock")
 	public Response deleteAllStocks() {
-		
+
 		stockRepository.deleteAllData();
 		return Response.ok().build();
 	}
 
-	
 }
