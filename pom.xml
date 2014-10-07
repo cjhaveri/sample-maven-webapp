@@ -148,7 +148,11 @@
 					</excludes>
 				</configuration>
 			</plugin>
-
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>2.4</version>
+			</plugin>
 			<plugin>
 				<groupId>org.jvnet.jaxb2_common</groupId>
 				<artifactId>jaxb2-default-value</artifactId>
@@ -165,6 +169,9 @@
 	<profiles>
 		<profile>
 			<id>integration-test</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
 			<build>
 				<finalName>sample-web</finalName>
 				<plugins>
@@ -203,6 +210,26 @@
 								<goals>
 									<goal>integration-test</goal>
 									<goal>verify</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+						<version>0.7.2.201409121644</version>
+						<executions>
+							<execution>
+								<id>pre-test</id>
+								<goals>
+									<goal>prepare-agent</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>post-integration-test</id>
+								<phase>test</phase>
+								<goals>
+									<goal>report</goal>
 								</goals>
 							</execution>
 						</executions>
