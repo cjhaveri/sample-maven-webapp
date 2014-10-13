@@ -1,10 +1,9 @@
 package test.chetan.endpoint;
 
-import javassist.bytecode.Descriptor.Iterator;
-
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -107,6 +106,30 @@ public class StockServiceEndpoint {
 
 	}
 
+
+	@PUT
+	@Path("/stock")
+	@Transactional(rollbackFor = { Exception.class })
+	public Response updateStockInformation(StockDTO stock) {
+
+		
+		Stock savedStock = stockRepository.findByTickerSymbol(stock.getTickerSymbol());
+		
+		if (savedStock == null) {
+			
+			return Response.notModified("Stock not found").build();
+		}
+		
+		
+		savedStock.setCompanyName(stock.getCompanyName());
+	
+		stockRepository.save(savedStock);
+		
+		return Response.ok().build();
+
+	}
+
+	
 	@DELETE
 	@Path("/stock/{ticker}")
 	public Response deleteStockByName(@PathParam("ticker") String ticker) {

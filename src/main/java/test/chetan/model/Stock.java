@@ -10,6 +10,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Version;
 
 @Entity
 public class Stock {
@@ -29,7 +30,19 @@ public class Stock {
 	@OneToMany(mappedBy = "stockId", fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
 	private Set<Comments> comments = new HashSet<Comments>();
 	
+	@Version
+	@Column(name="version")
+	private int version;
 	
+	
+	public int getVersion() {
+		return version;
+	}
+
+	public void setVersion(int version) {
+		this.version = version;
+	}
+
 	public int getId() {
 		return id;
 	}
