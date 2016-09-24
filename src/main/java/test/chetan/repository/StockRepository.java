@@ -11,11 +11,11 @@ import test.chetan.model.Stock;
 @Repository
 public interface StockRepository extends JpaRepository<Stock, Integer> {
 	
-	public Stock findByTickerSymbol(String companyName);
+	Stock findByTickerSymbol(String companyName);
 	
 	@Transactional
 	@Modifying
 	@Query("DELETE FROM Stock s")
-	public void deleteAllData();
+	void deleteAllData();
 	
 }
