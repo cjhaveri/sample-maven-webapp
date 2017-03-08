@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jpa="http://www.springframework.org/schema/data/jpa"
-	xmlns:jaxrs="http://cxf.apache.org/jaxrs" xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:cxf="http://cxf.apache.org/core"
-	xmlns:tx="http://www.springframework.org/schema/tx"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xmlns:jaxrs="http://cxf.apache.org/jaxrs" xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:cxf="http://cxf.apache.org/core"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:task="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
 	   					   http://www.springframework.org/schema/beans/spring-beans.xsd
 	   					   http://www.springframework.org/schema/data/jpa
     					   http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
     					   http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
     					   http://www.springframework.org/schema/context
 						   http://www.springframework.org/schema/context/spring-context.xsd
-						   http://www.springframework.org/schema/tx 
+						   http://www.springframework.org/schema/tx
 						   http://www.springframework.org/schema/tx/spring-tx.xsd
 						   http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
     					   ">
@@ -21,9 +21,14 @@
 	<jpa:repositories base-package="test.chetan.repository" />
 	<context:component-scan base-package="test.chetan.repository" />
 	<context:component-scan base-package="test.chetan.endpoint" />
+	<context:component-scan base-package="test.chetan.logic" />
 
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
 	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+
+
+
+
 
 	<jaxrs:server id="stockService">
 		<jaxrs:serviceBeans>

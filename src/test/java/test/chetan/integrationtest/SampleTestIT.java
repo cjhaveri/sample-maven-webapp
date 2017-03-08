@@ -20,11 +20,11 @@ import test.chetan.dto.StockDTO;
  * @author chetanjhaveri
  * 
  */
-public class SampleTestIT {
+public class SampleTestIT extends SampleTestITSuper {
 
 	private Logger logger = LoggerFactory.getLogger(SampleTestIT.class);
 
-	private String stockServicePath = "sample-web/service/stockservice";
+
 
 	@DataProvider(name = "stocksToTest")
 	private Object[][] stocksToTest() {
@@ -40,13 +40,6 @@ public class SampleTestIT {
 		};
 	}
 
-	private WebClient createWebClient() {
-		JacksonJaxbJsonProvider jsonProvider = new JacksonJaxbJsonProvider();
-		ArrayList<JacksonJaxbJsonProvider> providers = new ArrayList<JacksonJaxbJsonProvider>();
-		providers.add(jsonProvider);
-		WebClient client = WebClient.create("http://localhost:8080", providers);
-		return client;
-	}
 
 	@Test(enabled = true, dataProvider = "stocksToTest")
 	public void createStock(String ticker, String companyName, String comments,

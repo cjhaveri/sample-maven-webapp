@@ -19,10 +19,14 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import test.chetan.dto.StockDTO;
+import test.chetan.logic.DownstreamFourSecondService;
 import test.chetan.model.Comments;
 import test.chetan.model.Stock;
 import test.chetan.repository.CommentsRepository;
 import test.chetan.repository.StockRepository;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 @Service("StockServiceEndpoint")
 @Path("/stockservice/")
@@ -40,6 +44,9 @@ public class StockServiceEndpoint {
 
 	@Autowired
 	TransactionalMisc misc;
+
+    @Autowired
+    DownstreamFourSecondService dfs;
 
 	public StockServiceEndpoint() {
 		logger.debug("endpoint class invoked");
@@ -149,6 +156,29 @@ public class StockServiceEndpoint {
 	public Response deleteAllStocks() {
 
 		stockRepository.deleteAllData();
+		return Response.ok().build();
+	}
+
+	@POST
+	@Path("/nio-test")
+	public Response nioTest() {
+
+       logger.info("got request");
+        Future<String> future = dfs.callDownstreamService();
+        while (true) {
+            if (future.isDone()) {
+                try {
+                    future.get();
+                    //System.out.println(future.get());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+                break;
+            }
+        }
+        logger.info("returning out");
 		return Response.ok().build();
 	}
 
