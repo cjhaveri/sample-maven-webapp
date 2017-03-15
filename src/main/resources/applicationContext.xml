@@ -18,7 +18,7 @@
 
 	<context:annotation-config />
 
-	<jpa:repositories base-package="test.chetan.repository" />
+	<jpa:repositories base-package="test.chetan.repository" entity-manager-factory-ref="myEmf" transaction-manager-ref="transactionManager"/>
 	<context:component-scan base-package="test.chetan.repository" />
 	<context:component-scan base-package="test.chetan.endpoint" />
 	<context:component-scan base-package="test.chetan.logic" />

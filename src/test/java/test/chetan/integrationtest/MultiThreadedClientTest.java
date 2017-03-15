@@ -30,7 +30,7 @@ public class MultiThreadedClientTest extends SampleTestITSuper {
     }
 
 
-    @Test(enabled = true, threadPoolSize = 20, invocationCount = 20)
+    @Test(enabled = false, threadPoolSize = 20, invocationCount = 20)
     public void multiThreadedTest() throws Exception {
         try {
 

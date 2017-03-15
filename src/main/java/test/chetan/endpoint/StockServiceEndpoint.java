@@ -1,5 +1,7 @@
 package test.chetan.endpoint;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -25,8 +27,8 @@ import test.chetan.model.Stock;
 import test.chetan.repository.CommentsRepository;
 import test.chetan.repository.StockRepository;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service("StockServiceEndpoint")
 @Path("/stockservice/")
@@ -35,6 +37,8 @@ import java.util.concurrent.Future;
 public class StockServiceEndpoint {
 
 	Logger logger = LoggerFactory.getLogger(StockServiceEndpoint.class);
+
+    private AtomicInteger counter = new AtomicInteger();
 
 	@Autowired
 	StockRepository stockRepository;
@@ -45,12 +49,30 @@ public class StockServiceEndpoint {
 	@Autowired
 	TransactionalMisc misc;
 
-    @Autowired
-    DownstreamFourSecondService dfs;
+//    @Autowired
+//    DownstreamFourSecondService dfs;
+
+
+    ExecutorService executor1;
+    ExecutorService executor2;
 
 	public StockServiceEndpoint() {
 		logger.debug("endpoint class invoked");
 	}
+
+	@PostConstruct
+    public void initialize() {
+
+        executor1 = Executors.newFixedThreadPool(20);
+        executor2 = Executors.newFixedThreadPool(20);
+    }
+
+
+    @PreDestroy
+    public void tearDown() {
+        executor1.shutdown();
+        executor2.shutdown();
+    }
 
 	@GET
 	@Path("/stock/{ticker}")
@@ -163,22 +185,58 @@ public class StockServiceEndpoint {
 	@Path("/nio-test")
 	public Response nioTest() {
 
-       logger.info("got request");
-        Future<String> future = dfs.callDownstreamService();
-        while (true) {
-            if (future.isDone()) {
-                try {
-                    future.get();
-                    //System.out.println(future.get());
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
-                break;
-            }
+
+
+        DownstreamFourSecondService dfs = new DownstreamFourSecondService();
+
+//        if (counter.incrementAndGet() % 2 == 0) {
+//
+//            logger.info("got request even");
+//            Future<String> submit = executor1.submit(dfs);
+//
+//            try {
+//                String test = submit.get();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            } catch (ExecutionException e) {
+//                e.printStackTrace();
+//            }
+//        } else {
+//            logger.info("got request odd");
+//            Future <String> submit = executor2.submit(dfs);
+//            try {
+//                String test = submit.get();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            } catch (ExecutionException e) {
+//                e.printStackTrace();
+//            }
+//        }
+
+        try {
+            CompletableFuture<String> one = new CompletableFuture<>();
+
+            CompletableFuture.supplyAsync(
+                    () ->{
+                        try {
+                            Thread.sleep(5000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        one.complete("done");
+                        return null;
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
+
         logger.info("returning out");
+
+
+
+
+
 		return Response.ok().build();
 	}
 

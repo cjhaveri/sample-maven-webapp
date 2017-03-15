@@ -4,6 +4,7 @@ import javax.ws.rs.core.Response;
 
 import junit.framework.Assert;
 
+import org.aspectj.lang.annotation.After;
 import org.testng.annotations.*;
 
 import static org.mockito.Matchers.*;
@@ -85,6 +86,32 @@ public class HelloWorldTest {
 		verify(mockRepository, times(1)).deleteAllData();
 		Assert.assertEquals(response.getStatus(), Response.ok().build()
 				.getStatus());
+
+	}
+
+	StockServiceEndpoint endpoint;
+
+	@BeforeTest
+	public void init() {
+		 endpoint = new StockServiceEndpoint();
+		endpoint.initialize();
+
+	}
+
+	@AfterTest
+	public void teardown() {
+		endpoint.tearDown();
+	}
+
+
+	@Test (invocationCount =  20, threadPoolSize = 20)
+	public void testNIOEndPoint() {
+
+		endpoint.nioTest();
+
+
+
+
 
 	}
 }
