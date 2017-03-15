@@ -5,7 +5,6 @@ import org.apache.cxf.jaxrs.client.WebClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -14,11 +13,11 @@ import javax.ws.rs.core.Response;
 /**
  * Created by chetanjhaveri on 3/7/17.
  */
-public class MultiThreadedClientTest extends SampleTestITSuper {
+public class MultiThreadedClientTestIT extends SampleTestITSuper {
 
     long avgTime = 0;
 
-    Logger logger = LoggerFactory.getLogger(MultiThreadedClientTest.class);
+    Logger logger = LoggerFactory.getLogger(MultiThreadedClientTestIT.class);
 
 
     @BeforeTest
@@ -30,7 +29,7 @@ public class MultiThreadedClientTest extends SampleTestITSuper {
     }
 
 
-    @Test(enabled = false, threadPoolSize = 20, invocationCount = 20)
+    @Test(enabled = true, threadPoolSize = 20, invocationCount = 20)
     public void multiThreadedTest() throws Exception {
         try {
 
