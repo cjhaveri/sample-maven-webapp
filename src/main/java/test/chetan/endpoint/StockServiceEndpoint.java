@@ -36,18 +36,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Transactional
 public class StockServiceEndpoint {
 
-	Logger logger = LoggerFactory.getLogger(StockServiceEndpoint.class);
+    Logger logger = LoggerFactory.getLogger(StockServiceEndpoint.class);
 
     private AtomicInteger counter = new AtomicInteger();
 
-	@Autowired
-	StockRepository stockRepository;
+    @Autowired
+    StockRepository stockRepository;
 
-	@Autowired
-	CommentsRepository commentRepository;
+    @Autowired
+    CommentsRepository commentRepository;
 
-	@Autowired
-	TransactionalMisc misc;
+    @Autowired
+    TransactionalMisc misc;
 
 //    @Autowired
 //    DownstreamFourSecondService dfs;
@@ -56,11 +56,11 @@ public class StockServiceEndpoint {
     ExecutorService executor1;
     ExecutorService executor2;
 
-	public StockServiceEndpoint() {
-		logger.debug("endpoint class invoked");
-	}
+    public StockServiceEndpoint() {
+        logger.debug("endpoint class invoked");
+    }
 
-	@PostConstruct
+    @PostConstruct
     public void initialize() {
 
         executor1 = Executors.newFixedThreadPool(20);
@@ -74,117 +74,116 @@ public class StockServiceEndpoint {
         executor2.shutdown();
     }
 
-	@GET
-	@Path("/stock/{ticker}")
-	public Response getStockInformationById(@PathParam("ticker") String ticker) {
-		
-		Stock oneStock = stockRepository.findByTickerSymbol(ticker);
-		
-		//convert it into dto
-		StockDTO stockFound = new StockDTO();
-		
-		if (oneStock != null) {		
-			stockFound.setCompanyName(oneStock.getCompanyName());
-			stockFound.setTickerSymbol(oneStock.getTickerSymbol());
-			stockFound.setComments(Integer.toString(oneStock.getComments().size()));
-			java.util.Iterator<Comments> it = oneStock.getComments().iterator();
-			while (it.hasNext()){
-				logger.info("comment: {}", it.next().getComments());
-			}
-			return Response.ok(stockFound).build();
-		} else {
-			return Response.status(Status.NOT_FOUND).build();
-		}
-		
-		
-	}
+    @GET
+    @Path("/stock/{ticker}")
+    public Response getStockInformationById(@PathParam("ticker") String ticker) {
 
-	@POST
-	@Path("/stock")
-	@Transactional(rollbackFor = { Exception.class }, propagation = Propagation.NESTED)
-	public Response addStockInformation(StockDTO stock) {
+        Stock oneStock = stockRepository.findByTickerSymbol(ticker);
 
-		Stock stockToSave = new Stock();
+        //convert it into dto
+        StockDTO stockFound = new StockDTO();
 
-		if (stock.getCompanyName() == null || stock.getCompanyName().equals("")) {
-
-			return Response.noContent().build();
-		}
-
-		if (stock.getTickerSymbol() == null
-				|| stock.getTickerSymbol().equals("")) {
-			return Response.noContent().build();
-		}
-		stockToSave.setCompanyName(stock.getCompanyName());
-		stockToSave.setTickerSymbol(stock.getTickerSymbol());
-
-		Stock saved = stockRepository.save(stockToSave);
-
-		misc.saveMisc("1234");
-
-		Comments comment = new Comments();
-		comment.setComments(stock.getComments());
-		comment.setStockId(saved);
-
-		// comment.setComments("this comment is definitely greater than 25 characters long for sure!!!!!!!");
-		commentRepository.save(comment);
-
-		// logger.debug("saved stock with id: {}", savedStock.getId());
-
-		return Response.ok().build();
-
-	}
+        if (oneStock != null) {
+            stockFound.setCompanyName(oneStock.getCompanyName());
+            stockFound.setTickerSymbol(oneStock.getTickerSymbol());
+            stockFound.setComments(Integer.toString(oneStock.getComments().size()));
+            java.util.Iterator<Comments> it = oneStock.getComments().iterator();
+            while (it.hasNext()) {
+                logger.info("comment: {}", it.next().getComments());
+            }
+            return Response.ok(stockFound).build();
+        } else {
+            return Response.status(Status.NOT_FOUND).build();
+        }
 
 
-	@PUT
-	@Path("/stock")
-	@Transactional(rollbackFor = { Exception.class })
-	public Response updateStockInformation(StockDTO stock) {
+    }
 
-		
-		Stock savedStock = stockRepository.findByTickerSymbol(stock.getTickerSymbol());
-		
-		if (savedStock == null) {
-			
-			return Response.notModified("Stock not found").build();
-		}
-		
-		
-		savedStock.setCompanyName(stock.getCompanyName());
-	
-		stockRepository.save(savedStock);
-		
-		return Response.ok().build();
+    @POST
+    @Path("/stock")
+    @Transactional(rollbackFor = {Exception.class}, propagation = Propagation.NESTED)
+    public Response addStockInformation(StockDTO stock) {
 
-	}
+        Stock stockToSave = new Stock();
 
-	
-	@DELETE
-	@Path("/stock/{ticker}")
-	public Response deleteStockByName(@PathParam("ticker") String ticker) {
+        if (stock.getCompanyName() == null || stock.getCompanyName().equals("")) {
 
-		Stock stockFound = stockRepository.findByTickerSymbol(ticker);
-		if (stockFound != null) {
-			stockRepository.delete(stockFound);
-		} else {
-			return Response.notModified("Stock not found").build();
-		}
+            return Response.noContent().build();
+        }
 
-		return Response.ok().build();
-	}
+        if (stock.getTickerSymbol() == null
+                || stock.getTickerSymbol().equals("")) {
+            return Response.noContent().build();
+        }
+        stockToSave.setCompanyName(stock.getCompanyName());
+        stockToSave.setTickerSymbol(stock.getTickerSymbol());
 
-	@DELETE
-	@Path("/stock")
-	public Response deleteAllStocks() {
+        Stock saved = stockRepository.save(stockToSave);
 
-		stockRepository.deleteAllData();
-		return Response.ok().build();
-	}
+        misc.saveMisc("1234");
 
-	@POST
-	@Path("/nio-test")
-	public Response nioTest() {
+        Comments comment = new Comments();
+        comment.setComments(stock.getComments());
+        comment.setStockId(saved);
 
+        // comment.setComments("this comment is definitely greater than 25 characters long for sure!!!!!!!");
+        commentRepository.save(comment);
+
+        // logger.debug("saved stock with id: {}", savedStock.getId());
+
+        return Response.ok().build();
+
+    }
+
+
+    @PUT
+    @Path("/stock")
+    @Transactional(rollbackFor = {Exception.class})
+    public Response updateStockInformation(StockDTO stock) {
+
+
+        Stock savedStock = stockRepository.findByTickerSymbol(stock.getTickerSymbol());
+
+        if (savedStock == null) {
+
+            return Response.notModified("Stock not found").build();
+        }
+
+
+        savedStock.setCompanyName(stock.getCompanyName());
+
+        stockRepository.save(savedStock);
+
+        return Response.ok().build();
+
+    }
+
+
+    @DELETE
+    @Path("/stock/{ticker}")
+    public Response deleteStockByName(@PathParam("ticker") String ticker) {
+
+        Stock stockFound = stockRepository.findByTickerSymbol(ticker);
+        if (stockFound != null) {
+            stockRepository.delete(stockFound);
+        } else {
+            return Response.notModified("Stock not found").build();
+        }
+
+        return Response.ok().build();
+    }
+
+    @DELETE
+    @Path("/stock")
+    public Response deleteAllStocks() {
+
+        stockRepository.deleteAllData();
+        return Response.ok().build();
+    }
+
+    @POST
+    @Path("/nio-test")
+    public Response nioTest() {
 
 
         DownstreamFourSecondService dfs = new DownstreamFourSecondService();
@@ -213,31 +212,41 @@ public class StockServiceEndpoint {
 //            }
 //        }
 
-        try {
-            CompletableFuture<String> one = new CompletableFuture<>();
+        CompletableFuture<String> one = CompletableFuture.supplyAsync(() -> {
+            try {
+                logger.info("starting first sleep");
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return counter.incrementAndGet();
 
-            CompletableFuture.supplyAsync(
-                    () ->{
-                        try {
-                            Thread.sleep(5000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        one.complete("done");
-                        return null;
-                    });
-        } catch (Exception e) {
+        },executor2).thenApplyAsync((s1) -> {
+
+            try {
+                logger.info("starting second sleep");
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return "done " + s1;
+
+        },executor2);
+
+
+        try {
+            String finalAnswer = one.get();
+            logger.info("final answer {}", finalAnswer);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
             e.printStackTrace();
         }
-
 
         logger.info("returning out");
 
 
+        return Response.ok().build();
 
-
-
-		return Response.ok().build();
-	}
-
+    }
 }
