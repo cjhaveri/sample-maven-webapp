@@ -27,8 +27,14 @@ import test.chetan.model.Stock;
 import test.chetan.repository.CommentsRepository;
 import test.chetan.repository.StockRepository;
 
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 @Service("StockServiceEndpoint")
 @Path("/stockservice/")
@@ -37,6 +43,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class StockServiceEndpoint {
 
     Logger logger = LoggerFactory.getLogger(StockServiceEndpoint.class);
+
 
     private AtomicInteger counter = new AtomicInteger();
 
@@ -49,8 +56,8 @@ public class StockServiceEndpoint {
     @Autowired
     TransactionalMisc misc;
 
-//    @Autowired
-//    DownstreamFourSecondService dfs;
+    @Autowired
+    DownstreamFourSecondService dfs;
 
 
     ExecutorService executor1;
@@ -185,68 +192,46 @@ public class StockServiceEndpoint {
     @Path("/nio-test")
     public Response nioTest() {
 
+        Supplier<String> nameOfThisJob = ()->{return Integer.toString(counter.incrementAndGet());};
+        String payload = "request";
 
-        DownstreamFourSecondService dfs = new DownstreamFourSecondService();
+        String jobId = nameOfThisJob.get();
 
-//        if (counter.incrementAndGet() % 2 == 0) {
-//
-//            logger.info("got request even");
-//            Future<String> submit = executor1.submit(dfs);
-//
-//            try {
-//                String test = submit.get();
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            } catch (ExecutionException e) {
-//                e.printStackTrace();
-//            }
-//        } else {
-//            logger.info("got request odd");
-//            Future <String> submit = executor2.submit(dfs);
-//            try {
-//                String test = submit.get();
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            } catch (ExecutionException e) {
-//                e.printStackTrace();
-//            }
-//        }
+            CompletableFuture<String> downstreamCall = CompletableFuture.supplyAsync(() ->
+            {
+                String response = dfs.callService(payload, jobId);
+                return response;
 
-        CompletableFuture<String> one = CompletableFuture.supplyAsync(() -> {
-            try {
-                logger.info("starting first sleep");
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            return counter.incrementAndGet();
+            });
+               downstreamCall.exceptionally(this::handleException);
 
-        },executor2).thenApplyAsync((s1) -> {
-
-            try {
-                logger.info("starting second sleep");
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            return "done " + s1;
-
-        },executor2);
-
+        CompletableFuture.completedFuture(jobId)
+                .thenApplyAsync((s1) -> {
+                    logger.info("Thread id: " + Thread.currentThread().getId() + ", ID: " + s1);
+                    return s1;
+                }).thenAccept((s1) -> {logger.info("Thread id: " + Thread.currentThread().getId() + ", ID: " + s1);});
 
         try {
-            String finalAnswer = one.get();
-            logger.info("final answer {}", finalAnswer);
+            String response = downstreamCall.get();
+            return Response.ok().header("response",response).build();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-
-        logger.info("returning out");
-
-
-        return Response.ok().build();
+        return null;
 
     }
+
+    private String handleException(Throwable e) {
+        logger.error(e.getMessage());
+        return e.getMessage();
+    }
+
+
+    private String printName(String name) {
+        System.out.println(name);
+        return name + "s2";
+    }
+
 }
